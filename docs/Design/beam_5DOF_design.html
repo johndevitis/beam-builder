@@ -1,0 +1,573 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>beam_5DOF_design</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-11-15"><meta name="DC.source" content="beam_5DOF_design.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Vibs Example - 5DOF Lumped Mass Shear Beam</a></li><li><a href="#2">Beam Parameters</a></li><li><a href="#3">Build Beam</a></li><li><a href="#4">Eigen Solution</a></li><li><a href="#5">Form Residues</a></li><li><a href="#6">Summary</a></li><li><a href="#7">Beam Eigenvectors</a></li><li><a href="#8">H11 - FRF</a></li><li><a href="#9">H11 - Phase</a></li><li><a href="#10">H11 - IRF</a></li><li><a href="#11">H51 - FRF</a></li><li><a href="#12">H51 - Phase</a></li><li><a href="#13">H51 - IRF</a></li></ul></div><h2>Vibs Example - 5DOF Lumped Mass Shear Beam<a name="1"></a></h2><p>Beam Details and Analysis</p><p>jdv 06232015; 07232015; 08162015; 11122015</p><pre class="codeinput">clear <span class="string">all</span>
+</pre><h2>Beam Parameters<a name="2"></a></h2><pre class="codeinput"><span class="comment">% section</span>
+b = 1;              <span class="comment">% in</span>
+h = 12;             <span class="comment">% in</span>
+I = b*h^3/12;       <span class="comment">% in^4</span>
+A = b*h;            <span class="comment">% in^2</span>
+E = 29e6;           <span class="comment">% psi</span>
+
+<span class="comment">% geometry</span>
+L = 100*12;         <span class="comment">% ft -&gt; in; total length</span>
+nn = 5;             <span class="comment">% number of inner dof (discretization)</span>
+nel = nn+1;         <span class="comment">% number of beam elements</span>
+mchk = 1;           <span class="comment">% 1 = lumped mass, else = continuous</span>
+
+<span class="comment">% mass</span>
+ro = .29;           <span class="comment">% density [lb/in^3]</span>
+grav = 386.4;       <span class="comment">% in/sec^2;</span>
+mbar = A*ro;        <span class="comment">% lbf/in - weight</span>
+mbar = mbar/grav;   <span class="comment">% lbm/in (m = f/a)</span>
+</pre><h2>Build Beam<a name="3"></a></h2><pre class="codeinput"><span class="comment">% build bernoulli beam</span>
+[K,M] = beam_builder(E,I,L,nel,mbar,mchk);
+
+<span class="comment">% make shear beam</span>
+<span class="comment">%   -remove rotation dof</span>
+ind = 2:2:length(K);
+K = removerows(K,<span class="string">'ind'</span>,ind);
+K = removerows(K',<span class="string">'ind'</span>,ind);
+M = removerows(M,<span class="string">'ind'</span>,ind);
+M = removerows(M',<span class="string">'ind'</span>,ind);
+</pre><h2>Eigen Solution<a name="4"></a></h2><pre class="codeinput">[V,D] = eig(K,M);           <span class="comment">% solve</span>
+[val,ind] = sort(diag(D));  <span class="comment">% sort eigenvalues</span>
+V = V(:,ind);               <span class="comment">% apply sort to eigenvectors</span>
+W = sqrt(val);              <span class="comment">% [rad/sec]</span>
+F = W/2/pi;                 <span class="comment">% [hz]</span>
+
+<span class="comment">% decouple system matrices</span>
+Mr = V'*M*V; <span class="comment">% modal mass, Mr</span>
+Kr = V'*K*V; <span class="comment">% modal stiffness, Kr</span>
+
+
+<span class="comment">% form mass normalized modeshapes</span>
+Vn = zeros(size(V));
+ne = size(V,2);     <span class="comment">% number of effective modes</span>
+<span class="keyword">for</span> ii = 1:ne
+    Vn(:,ii) = V(:,ii)/sqrt(Mr(ii,ii));
+<span class="keyword">end</span>
+
+<span class="comment">% get scaled modal mass and stiff</span>
+Mr = Vn'*M*Vn;
+Kr = Vn'*K*Vn;
+
+<span class="comment">% add proportional damping</span>
+dampr = [.05 .05 .05 .05 .05]';      <span class="comment">% damping ratio [% critical damping]</span>
+dampf = -dampr.*W;                   <span class="comment">% damping factor [rad/sec]</span>
+Wn = sqrt(W.^2 + dampf.^2);          <span class="comment">% damped natural frequency [rad/sec]</span>
+root = dampf + 1j.*Wn;               <span class="comment">% form positive poles</span>
+</pre><h2>Form Residues<a name="5"></a></h2><p>Get residue [A]r for each mode r from eigenvectors to form partial fraction expansion</p><pre class="codeinput"><span class="comment">% form radial frequency vector</span>
+ns = 2^9;                   <span class="comment">% number of spectral samples</span>
+w = linspace(-150,150,ns);  <span class="comment">% [rad/sec]</span>
+inLoc = 1:5;                <span class="comment">% index for input locations (columns of H)</span>
+outLoc = 1:5;               <span class="comment">% index for output locations (rows of H)</span>
+no = length(outLoc);        <span class="comment">% number of outputs</span>
+ni = length(inLoc);         <span class="comment">% number of inputs</span>
+ne = 5;                     <span class="comment">% number of effective modes</span>
+
+<span class="comment">% define modal scaling for unit mass</span>
+<span class="comment">%  notes: -true unity mass due to mass normalize eigenvector</span>
+<span class="comment">%         -5 modes solved for</span>
+Qr = 1./(2j.*diag(Mr).*Wn);
+
+<span class="comment">% get FRF via residues</span>
+AA = zeros(no,ni,ns); HH = zeros(no,ni,ns);
+<span class="keyword">for</span> ii = 1:ne   <span class="comment">% loop modes</span>
+    <span class="comment">% form [A] for mode ii -&gt; [no x ni x ns]</span>
+    AA(:,:,ii) = Qr(ii) * V(:,ii) * V(:,ii)';
+    <span class="keyword">for</span> jj = 1:no       <span class="comment">% loop outputs</span>
+        <span class="keyword">for</span> kk = 1:ni   <span class="comment">% loop inputs</span>
+            out = outLoc(jj); <span class="comment">% output DOF index</span>
+            in  = inLoc(kk);  <span class="comment">% input  DOF index</span>
+            <span class="keyword">for</span> ll = 1:ns <span class="comment">% loop spectral lines</span>
+
+                <span class="comment">% form [H] - add mode ii contribution -&gt; [no x ni x ns]</span>
+                <span class="comment">%            complex conjugate</span>
+                tt = AA(out,in,ii) ./ (1j*w(ll) - root(ii)) + <span class="keyword">...</span>
+                          conj(AA(out,in,ii))./(1j*w(ll) - conj(root(ii)));
+
+                <span class="comment">% add each mode for total response</span>
+                HH(jj,kk,ll) = HH(jj,kk,ll) + tt;
+
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% convert HH [no x ni x ns] -&gt; H [ns x no*ni] (legacy format)</span>
+H = zeros(ns,no*ni);
+hInd = 1:no*ni;
+hInd = reshape(hInd,no,ni);
+<span class="keyword">for</span> ii = 1:ns
+    <span class="keyword">for</span> jj = 1:no
+        <span class="keyword">for</span> kk = 1:ni
+            H(ii,hInd(jj,kk)) = HH(jj,kk,ii);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>Summary<a name="6"></a></h2><p>System State Information:</p><pre class="codeinput">fprintf(<span class="string">'Mass: \n'</span>);
+disp(M);
+
+fprintf(<span class="string">'Stiffness: \n'</span>);
+disp(K);
+
+fprintf(<span class="string">'Natural Frequencies [Hz]: \n'</span>);
+disp(F);
+
+fprintf(<span class="string">'Damped natural frequencies [rad/sec]: \n'</span>);
+disp(Wn);
+
+fprintf(<span class="string">'Modal Mass: \n'</span>);
+disp(Mr);
+
+fprintf(<span class="string">'Modal Stiffness: \n'</span>);
+disp(Kr);
+
+fprintf(<span class="string">'Complex Roots:\n'</span>)
+fprintf(<span class="string">'Pole %d\t Damping Factor: %6.3f\t Positive Pole: %6.3f\n'</span>,<span class="keyword">...</span>
+    [1:length(root); real(root)'; imag(root)'])
+</pre><pre class="codeoutput">Mass: 
+    1.8012         0         0         0         0
+         0    1.8012         0         0         0
+         0         0    1.8012         0         0
+         0         0         0    1.8012         0
+         0         0         0         0    1.8012
+
+Stiffness: 
+       12528       -6264           0           0           0
+       -6264       12528       -6264           0           0
+           0       -6264       12528       -6264           0
+           0           0       -6264       12528       -6264
+           0           0           0       -6264       12528
+
+Natural Frequencies [Hz]: 
+    4.8583
+    9.3856
+   13.2732
+   16.2563
+   18.1315
+
+Damped natural frequencies [rad/sec]: 
+   30.5639
+   59.0448
+   83.5020
+  102.2687
+  114.0659
+
+Modal Mass: 
+    1.0000   -0.0000    0.0000    0.0000    0.0000
+   -0.0000    1.0000   -0.0000         0   -0.0000
+    0.0000   -0.0000    1.0000   -0.0000   -0.0000
+    0.0000         0   -0.0000    1.0000    0.0000
+    0.0000   -0.0000   -0.0000    0.0000    1.0000
+
+Modal Stiffness: 
+   1.0e+04 *
+
+    0.0932   -0.0000    0.0000    0.0000    0.0000
+   -0.0000    0.3478   -0.0000   -0.0000   -0.0000
+    0.0000   -0.0000    0.6955   -0.0000   -0.0000
+    0.0000   -0.0000         0    1.0433    0.0000
+    0.0000   -0.0000   -0.0000    0.0000    1.2979
+
+Complex Roots:
+Pole 1	 Damping Factor: -1.526	 Positive Pole: 30.564
+Pole 2	 Damping Factor: -2.949	 Positive Pole: 59.045
+Pole 3	 Damping Factor: -4.170	 Positive Pole: 83.502
+Pole 4	 Damping Factor: -5.107	 Positive Pole: 102.269
+Pole 5	 Damping Factor: -5.696	 Positive Pole: 114.066
+</pre><h2>Beam Eigenvectors<a name="7"></a></h2><pre class="codeinput"><span class="comment">% create figure</span>
+fh = figure;
+ah = axes;
+fh.PaperPositionMode = <span class="string">'auto'</span>;
+fh.Position = [100 100 1300 600];
+
+<span class="comment">% loop to plot</span>
+<span class="keyword">for</span> ii = 1:5
+    fprintf(<span class="string">'Mode: %d'</span>,ii);
+    beam_plotshape(ah,V(:,ii),1,L,nn);
+    title([<span class="string">'Mode: '</span> num2str(ii)],<span class="keyword">...</span>
+        <span class="string">'fontweight'</span>,<span class="string">'normal'</span>)
+    snapnow
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Mode: 1</pre><img vspace="5" hspace="5" src="beam_5DOF_design_01.png" alt=""> <pre class="codeoutput">Mode: 2</pre><img vspace="5" hspace="5" src="beam_5DOF_design_02.png" alt=""> <pre class="codeoutput">Mode: 3</pre><img vspace="5" hspace="5" src="beam_5DOF_design_03.png" alt=""> <pre class="codeoutput">Mode: 4</pre><img vspace="5" hspace="5" src="beam_5DOF_design_04.png" alt=""> <pre class="codeoutput">Mode: 5</pre><img vspace="5" hspace="5" src="beam_5DOF_design_05.png" alt=""> <h2>H11 - FRF<a name="8"></a></h2><p>Input 1, Output 1 Driving Point</p><pre class="codeinput"><span class="comment">% index dof</span>
+in  = 1;    <span class="comment">% H column index</span>
+out = 1;    <span class="comment">% H row index</span>
+
+<span class="comment">% form frf from residues and poles</span>
+[Hs,hh] = vibsFRF(AA,root,in,out,w);
+
+<span class="comment">% plot frf</span>
+fprintf(<span class="string">'H%d%d Magnitude\n'</span>,out,in);
+vibsFRFplot(Hs,hh,in,out,w);
+snapnow
+</pre><pre class="codeoutput">H11 Magnitude
+</pre><img vspace="5" hspace="5" src="beam_5DOF_design_06.png" alt=""> <h2>H11 - Phase<a name="9"></a></h2><pre class="codeinput"><span class="comment">% plot phase</span>
+fprintf(<span class="string">'H%d%d Phase\n'</span>,out,in);
+vibsPhaseplot(Hs,hh,in,out,w);
+snapnow
+</pre><pre class="codeoutput">H11 Phase
+</pre><img vspace="5" hspace="5" src="beam_5DOF_design_07.png" alt=""> <h2>H11 - IRF<a name="10"></a></h2><pre class="codeinput"><span class="comment">% plot irf</span>
+fs = 200; <span class="comment">% sampling freq</span>
+l = .5;    <span class="comment">% length [sec]</span>
+[hs,h] = vibsIRF(AA,root,in,out,fs,l);
+fprintf(<span class="string">'H%d%d - Impulse Response Function\n'</span>,out,in);
+vibsIRFplot(hs,h,in,out,fs,l);
+snapnow
+</pre><pre class="codeoutput">H11 - Impulse Response Function
+</pre><img vspace="5" hspace="5" src="beam_5DOF_design_08.png" alt=""> <h2>H51 - FRF<a name="11"></a></h2><p>Input 1, Output 5 Symmetric DOF</p><pre class="codeinput"><span class="comment">% index dof</span>
+in  = 1;    <span class="comment">% H column index</span>
+out = 5;    <span class="comment">% H row index</span>
+
+<span class="comment">% form frf from residues and poles</span>
+[Hs,hh] = vibsFRF(AA,root,in,out,w);
+
+<span class="comment">% plot frf</span>
+fprintf(<span class="string">'H%d%d Magnitude\n'</span>,out,in);
+vibsFRFplot(Hs,hh,in,out,w);
+snapnow
+</pre><pre class="codeoutput">H51 Magnitude
+</pre><img vspace="5" hspace="5" src="beam_5DOF_design_09.png" alt=""> <h2>H51 - Phase<a name="12"></a></h2><pre class="codeinput"><span class="comment">% plot phase</span>
+fprintf(<span class="string">'H%d%d Phase\n'</span>,out,in);
+vibsPhaseplot(Hs,hh,in,out,w);
+snapnow
+</pre><pre class="codeoutput">H51 Phase
+</pre><img vspace="5" hspace="5" src="beam_5DOF_design_10.png" alt=""> <h2>H51 - IRF<a name="13"></a></h2><pre class="codeinput"><span class="comment">% plot irf</span>
+fs = 200; <span class="comment">% sampling freq</span>
+l = .5;    <span class="comment">% length [sec]</span>
+[hs,h] = vibsIRF(AA,root,in,out,fs,l);
+fprintf(<span class="string">'H%d%d - Impulse Response Function\n'</span>,out,in);
+fh = vibsIRFplot(hs,h,in,out,fs,l);
+snapnow
+</pre><pre class="codeoutput">H51 - Impulse Response Function
+</pre><img vspace="5" hspace="5" src="beam_5DOF_design_11.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Vibs Example - 5DOF Lumped Mass Shear Beam
+% Beam Details and Analysis
+%
+% jdv 06232015; 07232015; 08162015; 11122015
+
+clear all 
+
+
+%% Beam Parameters
+
+% section
+b = 1;              % in
+h = 12;             % in
+I = b*h^3/12;       % in^4
+A = b*h;            % in^2
+E = 29e6;           % psi 
+
+% geometry
+L = 100*12;         % ft -> in; total length
+nn = 5;             % number of inner dof (discretization)
+nel = nn+1;         % number of beam elements
+mchk = 1;           % 1 = lumped mass, else = continuous
+
+% mass
+ro = .29;           % density [lb/in^3]
+grav = 386.4;       % in/sec^2;
+mbar = A*ro;        % lbf/in - weight
+mbar = mbar/grav;   % lbm/in (m = f/a)
+
+
+%% Build Beam
+
+% build bernoulli beam
+[K,M] = beam_builder(E,I,L,nel,mbar,mchk);
+
+% make shear beam
+%   -remove rotation dof
+ind = 2:2:length(K);
+K = removerows(K,'ind',ind);
+K = removerows(K','ind',ind);
+M = removerows(M,'ind',ind);
+M = removerows(M','ind',ind);
+
+
+%% Eigen Solution 
+
+[V,D] = eig(K,M);           % solve
+[val,ind] = sort(diag(D));  % sort eigenvalues
+V = V(:,ind);               % apply sort to eigenvectors
+W = sqrt(val);              % [rad/sec]
+F = W/2/pi;                 % [hz]
+
+% decouple system matrices
+Mr = V'*M*V; % modal mass, Mr
+Kr = V'*K*V; % modal stiffness, Kr
+
+
+% form mass normalized modeshapes
+Vn = zeros(size(V));
+ne = size(V,2);     % number of effective modes
+for ii = 1:ne
+    Vn(:,ii) = V(:,ii)/sqrt(Mr(ii,ii));
+end
+
+% get scaled modal mass and stiff
+Mr = Vn'*M*Vn;
+Kr = Vn'*K*Vn;
+
+% add proportional damping
+dampr = [.05 .05 .05 .05 .05]';      % damping ratio [% critical damping]
+dampf = -dampr.*W;                   % damping factor [rad/sec]
+Wn = sqrt(W.^2 + dampf.^2);          % damped natural frequency [rad/sec]
+root = dampf + 1j.*Wn;               % form positive poles 
+
+
+%% Form Residues
+% Get residue [A]r for each mode r
+% from eigenvectors to form partial fraction expansion
+
+% form radial frequency vector
+ns = 2^9;                   % number of spectral samples
+w = linspace(-150,150,ns);  % [rad/sec]
+inLoc = 1:5;                % index for input locations (columns of H)
+outLoc = 1:5;               % index for output locations (rows of H)
+no = length(outLoc);        % number of outputs
+ni = length(inLoc);         % number of inputs
+ne = 5;                     % number of effective modes
+
+% define modal scaling for unit mass
+%  notes: -true unity mass due to mass normalize eigenvector 
+%         -5 modes solved for
+Qr = 1./(2j.*diag(Mr).*Wn);
+
+% get FRF via residues
+AA = zeros(no,ni,ns); HH = zeros(no,ni,ns);
+for ii = 1:ne   % loop modes    
+    % form [A] for mode ii -> [no x ni x ns]
+    AA(:,:,ii) = Qr(ii) * V(:,ii) * V(:,ii)';     
+    for jj = 1:no       % loop outputs
+        for kk = 1:ni   % loop inputs            
+            out = outLoc(jj); % output DOF index
+            in  = inLoc(kk);  % input  DOF index            
+            for ll = 1:ns % loop spectral lines         
+                
+                % form [H] - add mode ii contribution -> [no x ni x ns]
+                %            complex conjugate
+                tt = AA(out,in,ii) ./ (1j*w(ll) - root(ii)) + ...
+                          conj(AA(out,in,ii))./(1j*w(ll) - conj(root(ii)));
+                
+                % add each mode for total response
+                HH(jj,kk,ll) = HH(jj,kk,ll) + tt;  
+               
+            end            
+        end
+    end   
+end
+
+% convert HH [no x ni x ns] -> H [ns x no*ni] (legacy format)
+H = zeros(ns,no*ni);
+hInd = 1:no*ni;
+hInd = reshape(hInd,no,ni);
+for ii = 1:ns
+    for jj = 1:no
+        for kk = 1:ni
+            H(ii,hInd(jj,kk)) = HH(jj,kk,ii);
+        end
+    end
+end
+
+
+%% Summary
+% System State Information: 
+fprintf('Mass: \n');
+disp(M); 
+
+fprintf('Stiffness: \n');
+disp(K); 
+
+fprintf('Natural Frequencies [Hz]: \n');
+disp(F); 
+
+fprintf('Damped natural frequencies [rad/sec]: \n');
+disp(Wn); 
+
+fprintf('Modal Mass: \n');
+disp(Mr);
+
+fprintf('Modal Stiffness: \n');
+disp(Kr);
+
+fprintf('Complex Roots:\n')
+fprintf('Pole %d\t Damping Factor: %6.3f\t Positive Pole: %6.3f\n',...
+    [1:length(root); real(root)'; imag(root)'])
+
+
+%% Beam Eigenvectors
+
+% create figure
+fh = figure; 
+ah = axes; 
+fh.PaperPositionMode = 'auto';
+fh.Position = [100 100 1300 600];
+    
+% loop to plot
+for ii = 1:5
+    fprintf('Mode: %d',ii);
+    beam_plotshape(ah,V(:,ii),1,L,nn);
+    title(['Mode: ' num2str(ii)],...
+        'fontweight','normal')
+    snapnow
+end
+
+%% H11 - FRF
+% Input 1, Output 1
+% Driving Point
+
+% index dof
+in  = 1;    % H column index
+out = 1;    % H row index
+
+% form frf from residues and poles
+[Hs,hh] = vibsFRF(AA,root,in,out,w);
+
+% plot frf
+fprintf('H%d%d Magnitude\n',out,in);
+vibsFRFplot(Hs,hh,in,out,w);
+snapnow
+
+%% H11 - Phase
+
+% plot phase
+fprintf('H%d%d Phase\n',out,in);
+vibsPhaseplot(Hs,hh,in,out,w);
+snapnow
+
+%% H11 - IRF
+
+% plot irf
+fs = 200; % sampling freq
+l = .5;    % length [sec] 
+[hs,h] = vibsIRF(AA,root,in,out,fs,l);
+fprintf('H%d%d - Impulse Response Function\n',out,in);
+vibsIRFplot(hs,h,in,out,fs,l);
+snapnow
+
+%% H51 - FRF
+% Input 1, Output 5
+% Symmetric DOF
+
+% index dof
+in  = 1;    % H column index
+out = 5;    % H row index
+
+% form frf from residues and poles
+[Hs,hh] = vibsFRF(AA,root,in,out,w);
+
+% plot frf
+fprintf('H%d%d Magnitude\n',out,in);
+vibsFRFplot(Hs,hh,in,out,w);
+snapnow
+
+%% H51 - Phase
+
+% plot phase
+fprintf('H%d%d Phase\n',out,in);
+vibsPhaseplot(Hs,hh,in,out,w);
+snapnow
+
+%% H51 - IRF
+
+% plot irf
+fs = 200; % sampling freq
+l = .5;    % length [sec] 
+[hs,h] = vibsIRF(AA,root,in,out,fs,l);
+fprintf('H%d%d - Impulse Response Function\n',out,in);
+fh = vibsIRFplot(hs,h,in,out,fs,l);
+snapnow
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

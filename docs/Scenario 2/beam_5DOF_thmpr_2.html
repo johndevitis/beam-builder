@@ -1,0 +1,1158 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>beam_5DOF_thmpr_2</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-11-14"><meta name="DC.source" content="beam_5DOF_thmpr_2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Vibs Example - 5DOF Lumped Mass Shear Beam</a></li><li><a href="#2">Beam Parameters</a></li><li><a href="#3">Build Beam</a></li><li><a href="#4">Eigen Solution</a></li><li><a href="#5">Form Residues</a></li><li><a href="#6">THMPER Scenario 2</a></li><li><a href="#7">Complex Mode Indicator Function</a></li><li><a href="#8">Shape Estimation</a></li><li><a href="#9">Plot tracked cmif</a></li><li><a href="#10">Pole Estimation</a></li><li><a href="#11">H12 Synthesis</a></li><li><a href="#12">H52 Synthesis</a></li><li><a href="#13">Modal Flexibility</a></li><li><a href="#14">print results</a></li></ul></div><h2>Vibs Example - 5DOF Lumped Mass Shear Beam<a name="1"></a></h2><p>Beam Details and Analysis</p><p>jdv 06232015; 07232015; 08162015; 11122015; 11142015;</p><pre class="codeinput">clear <span class="string">all</span>
+</pre><h2>Beam Parameters<a name="2"></a></h2><pre class="codeinput"><span class="comment">% section</span>
+b = 1;              <span class="comment">% in</span>
+h = 12;             <span class="comment">% in</span>
+I = b*h^3/12;       <span class="comment">% in^4</span>
+A = b*h;            <span class="comment">% in^2</span>
+E = 29e6;           <span class="comment">% psi</span>
+<span class="comment">% geometry</span>
+L = 100*12;         <span class="comment">% ft -&gt; in; total length</span>
+nn = 5;             <span class="comment">% number of inner dof (discretization)</span>
+nel = nn+1;         <span class="comment">% number of beam elements</span>
+mchk = 1;           <span class="comment">% 1 = lumped mass, else = continuous</span>
+<span class="comment">% mass</span>
+ro = .29;           <span class="comment">% density [lb/in^3]</span>
+grav = 386.4;       <span class="comment">% in/sec^2;</span>
+mbar = A*ro;        <span class="comment">% lbf/in - weight</span>
+mbar = mbar/grav;   <span class="comment">% lbm/in (m = f/a)</span>
+</pre><h2>Build Beam<a name="3"></a></h2><pre class="codeinput"><span class="comment">% build bernoulli beam</span>
+[K,M] = beam_builder(E,I,L,nel,mbar,mchk);
+
+<span class="comment">% make shear beam</span>
+<span class="comment">%   -remove rotation dof</span>
+ind = 2:2:length(K);
+K = removerows(K,<span class="string">'ind'</span>,ind);
+K = removerows(K',<span class="string">'ind'</span>,ind);
+M = removerows(M,<span class="string">'ind'</span>,ind);
+M = removerows(M',<span class="string">'ind'</span>,ind);
+</pre><h2>Eigen Solution<a name="4"></a></h2><pre class="codeinput">[V,D] = eig(K,M);           <span class="comment">% solve</span>
+[val,ind] = sort(diag(D));  <span class="comment">% sort eigenvalues</span>
+V = V(:,ind);               <span class="comment">% apply sort to eigenvectors</span>
+W = sqrt(val);              <span class="comment">% [rad/sec]</span>
+F = W/2/pi;                 <span class="comment">% [hz]</span>
+
+<span class="comment">% decouple system matrices</span>
+Mr = V'*M*V; <span class="comment">% modal mass, Mr</span>
+Kr = V'*K*V; <span class="comment">% modal stiffness, Kr</span>
+
+
+<span class="comment">% form mass normalized modeshapes</span>
+Vn = zeros(size(V));
+ne = size(V,2);     <span class="comment">% number of effective modes</span>
+<span class="keyword">for</span> ii = 1:ne
+    Vn(:,ii) = V(:,ii)/sqrt(Mr(ii,ii));
+<span class="keyword">end</span>
+
+<span class="comment">% get scaled modal mass and stiff</span>
+Mr = Vn'*M*Vn;
+Kr = Vn'*K*Vn;
+
+<span class="comment">% add proportional damping</span>
+dampr = [.05 .05 .05 .05 .05]';  <span class="comment">% damping ratio [% critical damping]</span>
+dampf = -dampr.*W;               <span class="comment">% damping factor [rad/sec]</span>
+Wn = sqrt(W.^2 + dampf.^2)       <span class="comment">% damped natural frequency [rad/sec]</span>
+root = dampf + 1j.*Wn            <span class="comment">% form positive poles</span>
+F = Wn/2/pi                      <span class="comment">% frequencies [hz]</span>
+</pre><pre class="codeoutput">
+Wn =
+
+   1.0e+02 *
+
+   0.305638620249057
+   0.590448473619841
+   0.835020239275672
+   1.022686755561057
+   1.140658859524728
+
+
+root =
+
+   1.0e+02 *
+
+ -0.015262864341257 + 0.305638620249057i
+ -0.029485589700733 + 0.590448473619841i
+ -0.041698920849346 + 0.835020239275672i
+ -0.051070539452800 + 1.022686755561057i
+ -0.056961785190603 + 1.140658859524728i
+
+
+F =
+
+   4.864389721242402
+   9.397279321766225
+  13.289759866250037
+  16.276565238215504
+  18.154149587492434
+
+</pre><h2>Form Residues<a name="5"></a></h2><p>Get residue [A]r for each mode r from eigenvectors to form partial fraction expansion</p><pre class="codeinput"><span class="comment">% form radial frequency vector</span>
+ns = 2^9;                   <span class="comment">% number of spectral samples</span>
+w = linspace(-150,150,ns);  <span class="comment">% [rad/sec]</span>
+inLoc = 1:5;                <span class="comment">% index for input locations (columns of H)</span>
+outLoc = 1:5;               <span class="comment">% index for output locations (rows of H)</span>
+no = length(outLoc);        <span class="comment">% number of outputs</span>
+ni = length(inLoc);         <span class="comment">% number of inputs</span>
+ne = 5;                     <span class="comment">% number of effective modes</span>
+
+<span class="comment">% define modal scaling for unit mass</span>
+<span class="comment">%  notes: -true unity mass due to mass normalize eigenvector</span>
+<span class="comment">%         -5 modes solved for</span>
+Qr = 1./(2j.*diag(Mr).*Wn)
+
+<span class="comment">% get FRF via residues</span>
+AA = zeros(no,ni,ns); HH = zeros(no,ni,ns);
+<span class="keyword">for</span> ii = 1:ne   <span class="comment">% loop modes</span>
+    <span class="comment">% form [A] for mode ii -&gt; [no x ni x ns]</span>
+    AA(:,:,ii) = Qr(ii) * V(:,ii) * V(:,ii)';
+    <span class="keyword">for</span> jj = 1:no       <span class="comment">% loop outputs</span>
+        <span class="keyword">for</span> kk = 1:ni   <span class="comment">% loop inputs</span>
+            out = outLoc(jj); <span class="comment">% output DOF index</span>
+            in  = inLoc(kk);  <span class="comment">% input  DOF index</span>
+            <span class="keyword">for</span> ll = 1:ns <span class="comment">% loop spectral lines</span>
+
+                <span class="comment">% form [H] - add mode ii contribution -&gt; [no x ni x ns]</span>
+                <span class="comment">%            complex conjugate</span>
+                tt = AA(out,in,ii) ./ (1j*w(ll) - root(ii)) + <span class="keyword">...</span>
+                          conj(AA(out,in,ii))./(1j*w(ll) - conj(root(ii)));
+
+                <span class="comment">% add each mode for total response</span>
+                HH(jj,kk,ll) = HH(jj,kk,ll) + tt;
+
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% convert HH [no x ni x ns] -&gt; H [ns x no*ni] (legacy format)</span>
+H = zeros(ns,no*ni);
+hInd = 1:no*ni;
+hInd = reshape(hInd,no,ni);
+<span class="keyword">for</span> ii = 1:ns
+    <span class="keyword">for</span> jj = 1:no
+        <span class="keyword">for</span> kk = 1:ni
+            H(ii,hInd(jj,kk)) = HH(jj,kk,ii);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+Qr =
+
+  0.000000000000000 - 0.016359189149348i
+  0.000000000000000 - 0.008468139428571i
+  0.000000000000000 - 0.005987878813976i
+  0.000000000000000 - 0.004889082578621i
+  0.000000000000000 - 0.004383431521396i
+
+</pre><h2>THMPER Scenario 2<a name="6"></a></h2><p>No link between input/output (i.e. only roving measurements). MDOF parameter id using roving DOF as final shapes and un-scaled input/output shapes for pole estimation/modal filter</p><pre class="codeinput">nn = 5;       <span class="comment">% number of global dof to include</span>
+in = [2 3 4]; <span class="comment">% global ref of input dof index</span>
+out = [1 5];  <span class="comment">% global ref of output dof index</span>
+
+<span class="comment">% find common dof between U and V</span>
+dp = meta_dp(out,in)
+</pre><pre class="codeoutput">
+dp = 
+
+     nr: 2
+     id: 1
+     in: []
+    out: []
+
+</pre><h2>Complex Mode Indicator Function<a name="7"></a></h2><pre class="codeinput"><span class="comment">% sort frf</span>
+[hh,out,in] = frf_sort(HH,out,in);
+
+<span class="comment">% find frequency index for roots</span>
+[~,peakLoc] = searchVector(w,Wn);
+
+<span class="comment">% - mode 4 override peak</span>
+[~,tt] = searchVector(w,101.9);
+peakLoc(4) = tt;
+
+<span class="comment">% - mode 5 slightly lagging, override to peak</span>
+[~,tt] = searchVector(w,113);
+peakLoc(5) = tt;
+
+<span class="comment">% add rank = 1</span>
+rank = ones(size(peakLoc));
+
+<span class="comment">% get cmif</span>
+[uu,ss,vv] = cmif_svd(hh);
+
+<span class="comment">% plot cmif</span>
+fh = figure; ah = axes;
+fh.PaperPositionMode = <span class="string">'auto'</span>;
+fh.Position = [100 100 1300 600];
+cmif_plot(ah,w,ss,[0 150],peakLoc,rank);
+lh = findobj(ah.Children,<span class="string">'type'</span>,<span class="string">'line'</span>);
+set(lh,<span class="string">'linewidth'</span>,1.5,<span class="string">'markersize'</span>,12);
+snapnow
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_01.png" alt=""> <h2>Shape Estimation<a name="8"></a></h2><pre class="codeinput"><span class="comment">% get shapes</span>
+[U,L,Lm,msf] = cmif_getshapes(uu,vv,dp.out,dp.in,peakLoc,rank)
+
+<span class="comment">% create figure</span>
+fh = figure; ah = axes;
+fh.PaperPositionMode = <span class="string">'auto'</span>;
+fh.Position = [50 250 1300 600];
+
+<span class="comment">% compare to eigenvector</span>
+<span class="keyword">for</span> ii = 1:5
+    fprintf(<span class="string">'Mode: %d\n'</span>,ii);
+    y1 = V(:,ii); <span class="comment">% eigenvector</span>
+    y2 = U(:,ii); <span class="comment">% largest dimension</span>
+    <span class="comment">% plot modes</span>
+    beam_plotshape2(ah,y1,y2,out,100*12,nn);
+    th = title([<span class="string">'Mode: '</span> num2str(ii)],<span class="keyword">...</span>
+        <span class="string">'fontweight'</span>,<span class="string">'normal'</span>,<span class="keyword">...</span>
+        <span class="string">'fontsize'</span>,26);
+    snapnow
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">	Getting shapes... Done.
+
+U =
+
+  Columns 1 through 3
+
+   0.866797075231463   1.000000000000000   0.005658979207228
+   1.000000000000000   0.000000000000001   1.000000000000000
+   0.866797075231464  -1.000000000000000   0.005658979207228
+
+  Columns 4 through 5
+
+  -1.000000000000000  -0.928673711387527
+  -0.000000000000000   1.000000000000000
+   1.000000000000000  -0.928673711387527
+
+
+L =
+
+  Columns 1 through 3
+
+   0.707106781186547   0.707106781186547   0.707106781186548
+   0.707106781186548  -0.707106781186548   0.707106781186547
+
+  Columns 4 through 5
+
+   0.707106781186548  -0.707106781186547
+  -0.707106781186547  -0.707106781186548
+
+
+Lm =
+
+  Columns 1 through 3
+
+   0.707106781186547   0.707106781186547   0.707106781186548
+   0.707106781186548  -0.707106781186548   0.707106781186547
+
+  Columns 4 through 5
+
+   0.707106781186548  -0.707106781186547
+  -0.707106781186547  -0.707106781186548
+
+
+msf =
+
+     []
+
+Mode: 1
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_02.png" alt=""> <pre class="codeoutput">Mode: 2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_03.png" alt=""> <pre class="codeoutput">Mode: 3
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_04.png" alt=""> <pre class="codeoutput">Mode: 4
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_05.png" alt=""> <pre class="codeoutput">Mode: 5
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_06.png" alt=""> <h2>Plot tracked cmif<a name="9"></a></h2><pre class="codeinput">fh = figure; ah = axes;
+fh.PaperPositionMode = <span class="string">'auto'</span>;
+fh.Position = [25 250 1300 600];
+
+lb = 5; rb = 145; thresh = .7;
+Sk = trackShapes(L,ss,vv,peakLoc,w,lb,rb,thresh);
+<span class="comment">% plot</span>
+[~,bnds] = searchVector(w,[lb rb]);
+ph = plot(ah,w(bnds(1):bnds(2)),mag2db(Sk),<span class="string">'.-'</span>);
+set(ph,<span class="string">'linewidth'</span>,1.5,<span class="string">'markersize'</span>,12);
+lg = [];
+<span class="keyword">for</span> ii = 1:size(L,2)
+    lg{ii} = [<span class="string">'Shape '</span> num2str(ii)];
+<span class="keyword">end</span>
+legend(ah,lg);
+set(ah,<span class="string">'fontsize'</span>,18, <span class="string">'fontname'</span>,<span class="string">'times new roman'</span>);
+grid(ah,<span class="string">'on'</span>); grid(ah,<span class="string">'minor'</span>);
+xlabel(<span class="string">'Frequency [Hz]'</span>);
+ylabel(<span class="string">'Singular Value Magnitude [db]'</span>);
+snapnow
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_07.png" alt=""> <h2>Pole Estimation<a name="10"></a></h2><pre class="codeinput"><span class="comment">% default fit parameters</span>
+noterms = ones(size(peakLoc))*5;
+nob = ones(size(peakLoc))*3;
+
+<span class="comment">% get poles</span>
+[eH,pols,frdmp,qr,ma,ehs] = cmif_getpoles(hh,U,Lm,dp,w/2/pi,peakLoc,noterms,nob);
+
+<span class="comment">% plot efrf</span>
+fh = figure; ah = axes;
+fh.PaperPositionMode = <span class="string">'auto'</span>;
+fh.Position = [100 100 1300 600];
+
+<span class="keyword">for</span> ii = 1:nn
+    fprintf(<span class="string">'eFRF - Curve Fit - Mode %d\n'</span>,ii);
+    plot(ah,w,mag2db(abs(eH(:,ii))),<span class="string">'.-'</span>)
+    hold(ah,<span class="string">'all'</span>)
+    plot(ah,w,mag2db(abs(ehs(:,ii))),<span class="string">'--'</span>)
+    plot(ah,w(peakLoc(ii)),mag2db(abs(eH(peakLoc(ii),ii))),<span class="string">'ro'</span>);
+    hold(ah,<span class="string">'off'</span>);
+    xlim(ah,[0 150]);
+    xlabel(ah,<span class="string">'Frequency [Hz]'</span>);
+    ylabel(ah,<span class="string">'eFRF Magnitude [db]'</span>);
+    grid(ah,<span class="string">'on'</span>);
+    grid(ah,<span class="string">'minor'</span>);
+    th = title(ah,[<span class="string">'Mode: '</span> num2str(ii) <span class="string">'    Frequency: '</span> num2str(imag(pols(ii))) <span class="string">' Hz'</span>]);
+    set(th,<span class="string">'fontweight'</span>,<span class="string">'normal'</span>);
+    set(ah,<span class="string">'fontname'</span>,<span class="string">'times new roman'</span>,<span class="string">'fontsize'</span>,18);
+    lh = findobj(ah.Children,<span class="string">'type'</span>,<span class="string">'line'</span>);
+    lh(3).MarkerSize = 12;
+    snapnow
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">	Getting poles... Done.
+eFRF - Curve Fit - Mode 1
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_08.png" alt=""> <pre class="codeoutput">eFRF - Curve Fit - Mode 2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_09.png" alt=""> <pre class="codeoutput">eFRF - Curve Fit - Mode 3
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_10.png" alt=""> <pre class="codeoutput">eFRF - Curve Fit - Mode 4
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_11.png" alt=""> <pre class="codeoutput">eFRF - Curve Fit - Mode 5
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_12.png" alt=""> <h2>H12 Synthesis<a name="11"></a></h2><pre class="codeinput">insel  = 1; <span class="comment">% input dof index - note: in/out switched due to frf size</span>
+outsel = 1; <span class="comment">% output dof index</span>
+
+<span class="comment">% FRF</span>
+fprintf(<span class="string">'FRF\tOutput: %2d\tInput: %2d\n'</span>,in(insel), out(outsel));
+    <span class="comment">% plot</span>
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsFRFplot(Hs,hs,insel,outsel,w);
+    hold <span class="string">all</span>
+    <span class="comment">% plot exact solution</span>
+    <span class="comment">%  -note: outsel/insel used w/o out/in indexing</span>
+    <span class="comment">%         bc hh already reduced from HH</span>
+    ph = plot(fh.Children(2),w,mag2db(abs(squeeze(hh(outsel,insel,:)))),<span class="string">'o--r'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,2,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]);
+    hold <span class="string">off</span>
+    <span class="comment">% get old strings</span>
+    lh = fh.Children(1);
+    st = [lh.String {[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]}];
+    <span class="comment">% append legend entry</span>
+    st{1} = [<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Estimated'</span>];
+    legend(st);
+    snapnow
+
+<span class="comment">% Phase</span>
+fprintf(<span class="string">'Phase\tOutput: %2d\tInput: %2d\n'</span>,in(insel), out(outsel));
+    <span class="comment">% plot</span>
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsPhaseplot(Hs,hs,insel,outsel,w);
+    hold <span class="string">all</span>
+    <span class="comment">% plot exact solution</span>
+    ph = plot(fh.Children(2),w,angle(squeeze(hh(outsel,insel,:)))*180/pi,<span class="string">'o--r'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,2,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel))  <span class="string">' - Actual'</span>]);
+    hold <span class="string">off</span>
+    <span class="comment">% get old strings</span>
+    lh = fh.Children(1);
+    st = [lh.String {[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]}];
+    <span class="comment">% append legend entry</span>
+    st{1} = [<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Estimated'</span>];
+    legend(st,<span class="string">'location'</span>,<span class="string">'northeast'</span>);
+    snapnow
+
+<span class="comment">% Impulse Response Function</span>
+fprintf(<span class="string">'IRF\tOutput: %2d\tInput: %2d\n'</span>,in(insel), out(outsel));
+    <span class="comment">% plot</span>
+    fs = 200; <span class="comment">% sampling freq</span>
+    l = .5;   <span class="comment">% length [sec]</span>
+    [Hs,hs] = irf_synth(U,Lm,outsel,insel,qr,pols,fs,l);
+    fh = vibsIRFplot(Hs,hs,insel,outsel,fs,l);
+    hold <span class="string">all</span>
+    <span class="comment">% plot exact solution</span>
+    h = [];
+    t = 0:1/fs:.5-1/fs;
+        <span class="keyword">for</span> ii = 1:ne <span class="comment">% loop poles</span>
+            <span class="comment">% get residue for mode ii</span>
+            AA = Qr(ii) * V(:,ii) * V(:,ii)';
+            h(:,ii) = AA(out(outsel),in(insel)) * exp(pols(ii)*t) + <span class="keyword">...</span>
+                    conj(AA(out(outsel),in(insel))) * exp(conj(pols(ii))*t);
+        <span class="keyword">end</span>
+        h = sum(h,2);
+        ph = plot(fh.Children(2),t(1:length(h)),h,<span class="string">'o--r'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,5,<span class="keyword">...</span>
+        <span class="string">'markerfacecolor'</span>,<span class="string">'r'</span>,<span class="keyword">...</span>
+        <span class="string">'markeredgecolor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]);
+    hold <span class="string">off</span>
+    <span class="comment">% get old strings</span>
+    lh = fh.Children(1);
+    st = [lh.String {[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]}];
+    <span class="comment">% append legend entry</span>
+    st{1} = [<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Estimated'</span>];
+    legend(st);
+    snapnow
+</pre><pre class="codeoutput">FRF	Output:  1	Input:  2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_13.png" alt=""> <pre class="codeoutput">Phase	Output:  1	Input:  2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_14.png" alt=""> <pre class="codeoutput">IRF	Output:  1	Input:  2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_15.png" alt=""> <h2>H52 Synthesis<a name="12"></a></h2><pre class="codeinput">insel  = 2; <span class="comment">% input dof index - note: in/out switched due to frf size</span>
+outsel = 1; <span class="comment">% output dof index</span>
+
+<span class="comment">% FRF</span>
+fprintf(<span class="string">'FRF\tOutput: %2d\tInput: %2d\n'</span>,in(insel), out(outsel));
+    <span class="comment">% plot</span>
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsFRFplot(Hs,hs,insel,outsel,w);
+    hold <span class="string">all</span>
+    <span class="comment">% plot exact solution</span>
+    <span class="comment">%  -note: outsel/insel used w/o out/in indexing</span>
+    <span class="comment">%         bc hh already reduced from HH</span>
+    ph = plot(fh.Children(2),w,mag2db(abs(squeeze(hh(outsel,insel,:)))),<span class="string">'o--r'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,2,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]);
+    hold <span class="string">off</span>
+    <span class="comment">% get old strings</span>
+    lh = fh.Children(1);
+    st = [lh.String {[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]}];
+    <span class="comment">% append legend entry</span>
+    st{1} = [<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Estimated'</span>];
+    legend(st);
+    snapnow
+
+<span class="comment">% Phase</span>
+fprintf(<span class="string">'Phase\tOutput: %2d\tInput: %2d\n'</span>,in(insel), out(outsel));
+    <span class="comment">% plot</span>
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsPhaseplot(Hs,hs,insel,outsel,w);
+    hold <span class="string">all</span>
+    <span class="comment">% plot exact solution</span>
+    ph = plot(fh.Children(2),w,angle(squeeze(hh(outsel,insel,:)))*180/pi,<span class="string">'o--r'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,2,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel))  <span class="string">' - Actual'</span>]);
+    hold <span class="string">off</span>
+    <span class="comment">% get old strings</span>
+    lh = fh.Children(1);
+    st = [lh.String {[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]}];
+    <span class="comment">% append legend entry</span>
+    st{1} = [<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Estimated'</span>];
+    legend(st,<span class="string">'location'</span>,<span class="string">'northeast'</span>);
+    snapnow
+
+<span class="comment">% Impulse Response Function</span>
+fprintf(<span class="string">'IRF\tOutput: %2d\tInput: %2d\n'</span>,in(insel), out(outsel));
+    <span class="comment">% plot</span>
+    [Hs,hs] = irf_synth(U,Lm,outsel,insel,qr,pols,fs,l);
+    fh = vibsIRFplot(Hs,hs,insel,outsel,fs,l);
+    hold <span class="string">all</span>
+    <span class="comment">% plot exact solution</span>
+    h = [];
+        <span class="keyword">for</span> ii = 1:ne <span class="comment">% loop poles</span>
+            <span class="comment">% get residue for mode ii</span>
+            AA = Qr(ii) * V(:,ii) * V(:,ii)';
+            h(:,ii) = AA(out(outsel),in(insel)) * exp(pols(ii)*t) + <span class="keyword">...</span>
+                    conj(AA(out(outsel),in(insel))) * exp(conj(pols(ii))*t);
+        <span class="keyword">end</span>
+        h = sum(h,2);
+        ph = plot(fh.Children(2),t(1:length(h)),h,<span class="string">'o--r'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,5,<span class="keyword">...</span>
+        <span class="string">'markerfacecolor'</span>,<span class="string">'r'</span>,<span class="keyword">...</span>
+        <span class="string">'markeredgecolor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]);
+    hold <span class="string">off</span>
+    <span class="comment">% get old strings</span>
+    lh = fh.Children(1);
+    st = [lh.String {[<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Actual'</span>]}];
+    <span class="comment">% append legend entry</span>
+    st{1} = [<span class="string">'H'</span> num2str(in(insel)) num2str(out(outsel)) <span class="string">' - Estimated'</span>];
+    legend(st);
+    snapnow
+</pre><pre class="codeoutput">FRF	Output:  5	Input:  2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_16.png" alt=""> <pre class="codeoutput">Phase	Output:  5	Input:  2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_17.png" alt=""> <pre class="codeoutput">IRF	Output:  5	Input:  2
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_18.png" alt=""> <h2>Modal Flexibility<a name="13"></a></h2><p>No curvature w/o interior sampling</p><pre class="codeinput"><span class="comment">% pre-al</span>
+modalFlex = zeros(size(U,1),size(U,1));
+
+<span class="comment">% loop modes for modal flex</span>
+<span class="keyword">for</span> ii = 1:size(U,2)
+    tmp = U(:,ii)*U(:,ii).'/(-1*ma(ii)*pols(ii));
+    modalFlex = modalFlex + tmp + conj(tmp);
+<span class="keyword">end</span>
+
+<span class="comment">% get deflections</span>
+f1 = zeros(length(K),1); <span class="comment">% pre-al</span>
+f1(out) = -1e3;          <span class="comment">% apply 1kip at modal nodes ONLY</span>
+y1 = inv(K) * f1;        <span class="comment">% true solution from stiffness matrix</span>
+
+f2 = ones(length(modalFlex),1)*-1e3;  <span class="comment">% ULS load vector</span>
+y2 = modalFlex * f2;                  <span class="comment">% modal flexibility</span>
+
+<span class="comment">% plot exact solution in blue</span>
+fh = figure; ah = axes;
+fh.PaperPositionMode = <span class="string">'auto'</span>;
+fh.Position = [100 100 1300 600];
+
+<span class="comment">% gather spatial coordinates</span>
+xx = linspace(0,100,nn+2);       <span class="comment">% x-dim in feet</span>
+yy = normalizeMode([y1(out) y2]); <span class="comment">% normalize modes</span>
+yn = normalizeMode(y1);
+xxo = xx(2:end-1);
+xxo = xxo-xxo(1);
+xxb = xxo(out);
+
+<span class="comment">% hold axes</span>
+hold(ah,<span class="string">'on'</span>);
+    <span class="comment">% plot Y1 - full resolution eigenvector</span>
+    plot(ah,xxo,y1(:,1),<span class="string">'o-k'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markeredgecolor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+        <span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,14,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,<span class="string">'Exact'</span>);
+    <span class="comment">% plot Y2 - estimated</span>
+    plot(ah,xxo(out),y2,<span class="string">'v--k'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,3,<span class="keyword">...</span>
+        <span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>,<span class="keyword">...</span>
+        <span class="string">'markeredgecolor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,18,<span class="keyword">...</span>
+        <span class="string">'displayname'</span>,<span class="string">'Estimated'</span>);
+    <span class="comment">% add legend before undeformed plot</span>
+    legend(ah,<span class="string">'location'</span>,<span class="string">'northeast'</span>);
+    <span class="comment">% plot un-deformed</span>
+    plot(xxo,zeros(size(xxo)),<span class="string">'o:k'</span>,<span class="keyword">...</span>
+        <span class="string">'linewidth'</span>,2,<span class="keyword">...</span>
+        <span class="string">'markerfacecolor'</span>,<span class="string">'none'</span>,<span class="keyword">...</span>
+        <span class="string">'markersize'</span>,11);
+hold(ah,<span class="string">'off'</span>);
+    <span class="comment">% format</span>
+    tsize = 26; <span class="comment">% text size</span>
+    xlabel(ah,<span class="string">'Beam Length [ft]'</span>);
+    ylabel(ah,<span class="string">'Modal Amplitude'</span>);
+    set(ah,<span class="string">'fontsize'</span>,tsize,<span class="string">'fontname'</span>,<span class="string">'Times New Roman'</span>);
+    xlim(ah,[min(xxo)-5 max(xxo)+5])
+    tmp = ah.YLim;
+    ylim(ah,[tmp(1) abs(tmp(1))*.3]);
+    grid(ah,<span class="string">'on'</span>)
+    grid(ah,<span class="string">'minor'</span>)
+    box <span class="string">on</span>
+</pre><img vspace="5" hspace="5" src="beam_5DOF_thmpr_2_19.png" alt=""> <h2>print results<a name="14"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nTotal loads: %i %i\n'</span>, sum(f1),sum(f2))
+fprintf(<span class="string">'\nExact Displacement:\n'</span>)
+fprintf(<span class="string">'%f\n'</span>,y1)
+fprintf(<span class="string">'\nModal Prediction:\n'</span>)
+fprintf(<span class="string">'%f\n'</span>,y2)
+
+<span class="comment">% percent difference</span>
+tt = (y1(out) - y2) ./ y2 * 100;
+fprintf(<span class="string">'\nPercent Difference: \n'</span>);
+fprintf(<span class="string">'%2.2f\n'</span>,tt);
+</pre><pre class="codeoutput">
+Total loads: -3000 -3000
+
+Exact Displacement:
+-0.239464
+-0.478927
+-0.558748
+-0.478927
+-0.239464
+
+Modal Prediction:
+-0.510553
+-0.579518
+-0.510553
+
+Percent Difference: 
+-6.19
+-3.58
+-6.19
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Vibs Example - 5DOF Lumped Mass Shear Beam
+% Beam Details and Analysis
+%
+% jdv 06232015; 07232015; 08162015; 11122015; 11142015;
+
+clear all
+
+
+%% Beam Parameters
+
+% section
+b = 1;              % in
+h = 12;             % in
+I = b*h^3/12;       % in^4
+A = b*h;            % in^2
+E = 29e6;           % psi 
+% geometry
+L = 100*12;         % ft -> in; total length
+nn = 5;             % number of inner dof (discretization)
+nel = nn+1;         % number of beam elements
+mchk = 1;           % 1 = lumped mass, else = continuous
+% mass
+ro = .29;           % density [lb/in^3]
+grav = 386.4;       % in/sec^2;
+mbar = A*ro;        % lbf/in - weight
+mbar = mbar/grav;   % lbm/in (m = f/a)
+
+
+%% Build Beam
+
+% build bernoulli beam
+[K,M] = beam_builder(E,I,L,nel,mbar,mchk);
+
+% make shear beam
+%   -remove rotation dof
+ind = 2:2:length(K);
+K = removerows(K,'ind',ind);
+K = removerows(K','ind',ind);
+M = removerows(M,'ind',ind);
+M = removerows(M','ind',ind);
+
+
+%% Eigen Solution 
+
+[V,D] = eig(K,M);           % solve
+[val,ind] = sort(diag(D));  % sort eigenvalues
+V = V(:,ind);               % apply sort to eigenvectors
+W = sqrt(val);              % [rad/sec]
+F = W/2/pi;                 % [hz]
+
+% decouple system matrices
+Mr = V'*M*V; % modal mass, Mr
+Kr = V'*K*V; % modal stiffness, Kr
+
+
+% form mass normalized modeshapes
+Vn = zeros(size(V));
+ne = size(V,2);     % number of effective modes
+for ii = 1:ne
+    Vn(:,ii) = V(:,ii)/sqrt(Mr(ii,ii));
+end
+
+% get scaled modal mass and stiff
+Mr = Vn'*M*Vn;
+Kr = Vn'*K*Vn;
+
+% add proportional damping
+dampr = [.05 .05 .05 .05 .05]';  % damping ratio [% critical damping]
+dampf = -dampr.*W;               % damping factor [rad/sec]
+Wn = sqrt(W.^2 + dampf.^2)       % damped natural frequency [rad/sec]
+root = dampf + 1j.*Wn            % form positive poles 
+F = Wn/2/pi                      % frequencies [hz]
+
+
+%% Form Residues
+% Get residue [A]r for each mode r
+% from eigenvectors to form partial fraction expansion
+
+% form radial frequency vector
+ns = 2^9;                   % number of spectral samples
+w = linspace(-150,150,ns);  % [rad/sec]
+inLoc = 1:5;                % index for input locations (columns of H)
+outLoc = 1:5;               % index for output locations (rows of H)
+no = length(outLoc);        % number of outputs
+ni = length(inLoc);         % number of inputs
+ne = 5;                     % number of effective modes
+
+% define modal scaling for unit mass
+%  notes: -true unity mass due to mass normalize eigenvector 
+%         -5 modes solved for
+Qr = 1./(2j.*diag(Mr).*Wn)
+
+% get FRF via residues
+AA = zeros(no,ni,ns); HH = zeros(no,ni,ns);
+for ii = 1:ne   % loop modes    
+    % form [A] for mode ii -> [no x ni x ns]
+    AA(:,:,ii) = Qr(ii) * V(:,ii) * V(:,ii)';     
+    for jj = 1:no       % loop outputs
+        for kk = 1:ni   % loop inputs            
+            out = outLoc(jj); % output DOF index
+            in  = inLoc(kk);  % input  DOF index            
+            for ll = 1:ns % loop spectral lines         
+                
+                % form [H] - add mode ii contribution -> [no x ni x ns]
+                %            complex conjugate
+                tt = AA(out,in,ii) ./ (1j*w(ll) - root(ii)) + ...
+                          conj(AA(out,in,ii))./(1j*w(ll) - conj(root(ii)));
+                
+                % add each mode for total response
+                HH(jj,kk,ll) = HH(jj,kk,ll) + tt;  
+               
+            end            
+        end
+    end   
+end
+
+% convert HH [no x ni x ns] -> H [ns x no*ni] (legacy format)
+H = zeros(ns,no*ni);
+hInd = 1:no*ni;
+hInd = reshape(hInd,no,ni);
+for ii = 1:ns
+    for jj = 1:no
+        for kk = 1:ni
+            H(ii,hInd(jj,kk)) = HH(jj,kk,ii);
+        end
+    end
+end
+
+
+%% THMPER Scenario 2
+% No link between input/output (i.e. only roving measurements). 
+% MDOF parameter id using roving DOF as final shapes
+% and un-scaled input/output shapes for pole estimation/modal filter
+
+nn = 5;       % number of global dof to include
+in = [2 3 4]; % global ref of input dof index
+out = [1 5];  % global ref of output dof index
+
+% find common dof between U and V
+dp = meta_dp(out,in)
+
+%% Complex Mode Indicator Function
+
+% sort frf
+[hh,out,in] = frf_sort(HH,out,in);
+
+% find frequency index for roots
+[~,peakLoc] = searchVector(w,Wn);
+
+% - mode 4 override peak
+[~,tt] = searchVector(w,101.9);
+peakLoc(4) = tt;
+
+% - mode 5 slightly lagging, override to peak
+[~,tt] = searchVector(w,113);
+peakLoc(5) = tt;
+
+% add rank = 1
+rank = ones(size(peakLoc));
+
+% get cmif
+[uu,ss,vv] = cmif_svd(hh);
+
+% plot cmif
+fh = figure; ah = axes; 
+fh.PaperPositionMode = 'auto';
+fh.Position = [100 100 1300 600];
+cmif_plot(ah,w,ss,[0 150],peakLoc,rank);
+lh = findobj(ah.Children,'type','line');
+set(lh,'linewidth',1.5,'markersize',12);
+snapnow
+
+
+%% Shape Estimation
+
+% get shapes
+[U,L,Lm,msf] = cmif_getshapes(uu,vv,dp.out,dp.in,peakLoc,rank)
+
+% create figure
+fh = figure; ah = axes; 
+fh.PaperPositionMode = 'auto';
+fh.Position = [50 250 1300 600];
+
+% compare to eigenvector
+for ii = 1:5
+    fprintf('Mode: %d\n',ii);
+    y1 = V(:,ii); % eigenvector
+    y2 = U(:,ii); % largest dimension
+    % plot modes
+    beam_plotshape2(ah,y1,y2,out,100*12,nn);
+    th = title(['Mode: ' num2str(ii)],...
+        'fontweight','normal',...
+        'fontsize',26);
+    snapnow
+end
+
+
+%% Plot tracked cmif
+
+fh = figure; ah = axes; 
+fh.PaperPositionMode = 'auto';
+fh.Position = [25 250 1300 600];
+
+lb = 5; rb = 145; thresh = .7;
+Sk = trackShapes(L,ss,vv,peakLoc,w,lb,rb,thresh);
+% plot
+[~,bnds] = searchVector(w,[lb rb]);
+ph = plot(ah,w(bnds(1):bnds(2)),mag2db(Sk),'.-');
+set(ph,'linewidth',1.5,'markersize',12);
+lg = [];
+for ii = 1:size(L,2)
+    lg{ii} = ['Shape ' num2str(ii)];
+end
+legend(ah,lg);
+set(ah,'fontsize',18, 'fontname','times new roman');
+grid(ah,'on'); grid(ah,'minor');
+xlabel('Frequency [Hz]');
+ylabel('Singular Value Magnitude [db]');
+snapnow
+
+
+%% Pole Estimation
+
+% default fit parameters
+noterms = ones(size(peakLoc))*5;
+nob = ones(size(peakLoc))*3;
+
+% get poles
+[eH,pols,frdmp,qr,ma,ehs] = cmif_getpoles(hh,U,Lm,dp,w/2/pi,peakLoc,noterms,nob);
+
+% plot efrf
+fh = figure; ah = axes; 
+fh.PaperPositionMode = 'auto';
+fh.Position = [100 100 1300 600];
+
+for ii = 1:nn
+    fprintf('eFRF - Curve Fit - Mode %d\n',ii);
+    plot(ah,w,mag2db(abs(eH(:,ii))),'.-')
+    hold(ah,'all')
+    plot(ah,w,mag2db(abs(ehs(:,ii))),'REPLACE_WITH_DASH_DASH')
+    plot(ah,w(peakLoc(ii)),mag2db(abs(eH(peakLoc(ii),ii))),'ro');
+    hold(ah,'off');
+    xlim(ah,[0 150]);
+    xlabel(ah,'Frequency [Hz]');
+    ylabel(ah,'eFRF Magnitude [db]');
+    grid(ah,'on');
+    grid(ah,'minor');
+    th = title(ah,['Mode: ' num2str(ii) '    Frequency: ' num2str(imag(pols(ii))) ' Hz']);
+    set(th,'fontweight','normal');
+    set(ah,'fontname','times new roman','fontsize',18);
+    lh = findobj(ah.Children,'type','line');
+    lh(3).MarkerSize = 12;
+    snapnow
+end
+
+
+%% H12 Synthesis
+
+insel  = 1; % input dof index - note: in/out switched due to frf size
+outsel = 1; % output dof index
+
+% FRF
+fprintf('FRF\tOutput: %2d\tInput: %2d\n',in(insel), out(outsel));
+    % plot
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsFRFplot(Hs,hs,insel,outsel,w);
+    hold all    
+    % plot exact solution
+    %  -note: outsel/insel used w/o out/in indexing
+    %         bc hh already reduced from HH
+    ph = plot(fh.Children(2),w,mag2db(abs(squeeze(hh(outsel,insel,:)))),'oREPLACE_WITH_DASH_DASHr',...
+        'linewidth',2,...
+        'markersize',2,...
+        'displayname',['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']);
+    hold off    
+    % get old strings
+    lh = fh.Children(1);
+    st = [lh.String {['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']}];
+    % append legend entry
+    st{1} = ['H' num2str(in(insel)) num2str(out(outsel)) ' - Estimated'];
+    legend(st);
+    snapnow
+    
+% Phase
+fprintf('Phase\tOutput: %2d\tInput: %2d\n',in(insel), out(outsel));
+    % plot
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsPhaseplot(Hs,hs,insel,outsel,w);
+    hold all    
+    % plot exact solution
+    ph = plot(fh.Children(2),w,angle(squeeze(hh(outsel,insel,:)))*180/pi,'oREPLACE_WITH_DASH_DASHr',...
+        'linewidth',2,...
+        'markersize',2,...
+        'displayname',['H' num2str(in(insel)) num2str(out(outsel))  ' - Actual']);
+    hold off
+    % get old strings
+    lh = fh.Children(1);
+    st = [lh.String {['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']}];
+    % append legend entry
+    st{1} = ['H' num2str(in(insel)) num2str(out(outsel)) ' - Estimated'];
+    legend(st,'location','northeast');
+    snapnow
+
+% Impulse Response Function
+fprintf('IRF\tOutput: %2d\tInput: %2d\n',in(insel), out(outsel));
+    % plot
+    fs = 200; % sampling freq
+    l = .5;   % length [sec]
+    [Hs,hs] = irf_synth(U,Lm,outsel,insel,qr,pols,fs,l);
+    fh = vibsIRFplot(Hs,hs,insel,outsel,fs,l);
+    hold all
+    % plot exact solution    
+    h = [];
+    t = 0:1/fs:.5-1/fs;
+        for ii = 1:ne % loop poles
+            % get residue for mode ii
+            AA = Qr(ii) * V(:,ii) * V(:,ii)'; 
+            h(:,ii) = AA(out(outsel),in(insel)) * exp(pols(ii)*t) + ...
+                    conj(AA(out(outsel),in(insel))) * exp(conj(pols(ii))*t);
+        end
+        h = sum(h,2);
+        ph = plot(fh.Children(2),t(1:length(h)),h,'oREPLACE_WITH_DASH_DASHr',...
+        'linewidth',2,...
+        'markersize',5,...
+        'markerfacecolor','r',...
+        'markeredgecolor','none',...
+        'displayname',['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']);
+    hold off
+    % get old strings
+    lh = fh.Children(1);
+    st = [lh.String {['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']}];
+    % append legend entry
+    st{1} = ['H' num2str(in(insel)) num2str(out(outsel)) ' - Estimated'];
+    legend(st);
+    snapnow  
+
+
+%% H52 Synthesis
+
+insel  = 2; % input dof index - note: in/out switched due to frf size
+outsel = 1; % output dof index
+
+% FRF
+fprintf('FRF\tOutput: %2d\tInput: %2d\n',in(insel), out(outsel));
+    % plot
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsFRFplot(Hs,hs,insel,outsel,w);
+    hold all    
+    % plot exact solution
+    %  -note: outsel/insel used w/o out/in indexing
+    %         bc hh already reduced from HH
+    ph = plot(fh.Children(2),w,mag2db(abs(squeeze(hh(outsel,insel,:)))),'oREPLACE_WITH_DASH_DASHr',...
+        'linewidth',2,...
+        'markersize',2,...
+        'displayname',['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']);
+    hold off    
+    % get old strings
+    lh = fh.Children(1);
+    st = [lh.String {['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']}];
+    % append legend entry
+    st{1} = ['H' num2str(in(insel)) num2str(out(outsel)) ' - Estimated'];
+    legend(st);
+    snapnow
+    
+% Phase
+fprintf('Phase\tOutput: %2d\tInput: %2d\n',in(insel), out(outsel));
+    % plot
+    [Hs,hs] = frf_synthesize(U,Lm,outsel,insel,qr,pols,w);
+    fh = vibsPhaseplot(Hs,hs,insel,outsel,w);
+    hold all    
+    % plot exact solution
+    ph = plot(fh.Children(2),w,angle(squeeze(hh(outsel,insel,:)))*180/pi,'oREPLACE_WITH_DASH_DASHr',...
+        'linewidth',2,...
+        'markersize',2,...
+        'displayname',['H' num2str(in(insel)) num2str(out(outsel))  ' - Actual']);
+    hold off
+    % get old strings
+    lh = fh.Children(1);
+    st = [lh.String {['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']}];
+    % append legend entry
+    st{1} = ['H' num2str(in(insel)) num2str(out(outsel)) ' - Estimated'];
+    legend(st,'location','northeast');
+    snapnow
+
+% Impulse Response Function
+fprintf('IRF\tOutput: %2d\tInput: %2d\n',in(insel), out(outsel));
+    % plot
+    [Hs,hs] = irf_synth(U,Lm,outsel,insel,qr,pols,fs,l);
+    fh = vibsIRFplot(Hs,hs,insel,outsel,fs,l);
+    hold all
+    % plot exact solution    
+    h = [];
+        for ii = 1:ne % loop poles
+            % get residue for mode ii
+            AA = Qr(ii) * V(:,ii) * V(:,ii)'; 
+            h(:,ii) = AA(out(outsel),in(insel)) * exp(pols(ii)*t) + ...
+                    conj(AA(out(outsel),in(insel))) * exp(conj(pols(ii))*t);
+        end
+        h = sum(h,2);
+        ph = plot(fh.Children(2),t(1:length(h)),h,'oREPLACE_WITH_DASH_DASHr',...
+        'linewidth',2,...
+        'markersize',5,...
+        'markerfacecolor','r',...
+        'markeredgecolor','none',...
+        'displayname',['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']);
+    hold off
+    % get old strings
+    lh = fh.Children(1);
+    st = [lh.String {['H' num2str(in(insel)) num2str(out(outsel)) ' - Actual']}];
+    % append legend entry
+    st{1} = ['H' num2str(in(insel)) num2str(out(outsel)) ' - Estimated'];
+    legend(st);
+    snapnow  
+  
+    
+%% Modal Flexibility
+% No curvature w/o interior sampling
+
+% pre-al
+modalFlex = zeros(size(U,1),size(U,1));
+
+% loop modes for modal flex
+for ii = 1:size(U,2)
+    tmp = U(:,ii)*U(:,ii).'/(-1*ma(ii)*pols(ii));
+    modalFlex = modalFlex + tmp + conj(tmp);
+end
+
+% get deflections
+f1 = zeros(length(K),1); % pre-al
+f1(out) = -1e3;          % apply 1kip at modal nodes ONLY
+y1 = inv(K) * f1;        % true solution from stiffness matrix
+
+f2 = ones(length(modalFlex),1)*-1e3;  % ULS load vector
+y2 = modalFlex * f2;                  % modal flexibility
+
+% plot exact solution in blue
+fh = figure; ah = axes;
+fh.PaperPositionMode = 'auto';
+fh.Position = [100 100 1300 600];
+
+% gather spatial coordinates
+xx = linspace(0,100,nn+2);       % x-dim in feet
+yy = normalizeMode([y1(out) y2]); % normalize modes
+yn = normalizeMode(y1);
+xxo = xx(2:end-1);
+xxo = xxo-xxo(1);
+xxb = xxo(out);
+
+% hold axes
+hold(ah,'on');
+    % plot Y1 - full resolution eigenvector
+    plot(ah,xxo,y1(:,1),'o-k',...
+        'linewidth',2,...
+        'markeredgecolor','none',...
+        'markerfacecolor','k',...
+        'markersize',14,...
+        'displayname','Exact');
+    % plot Y2 - estimated
+    plot(ah,xxo(out),y2,'vREPLACE_WITH_DASH_DASHk',...
+        'linewidth',3,...
+        'markerfacecolor','k',...
+        'markeredgecolor','none',...
+        'markersize',18,...
+        'displayname','Estimated');
+    % add legend before undeformed plot
+    legend(ah,'location','northeast');
+    % plot un-deformed
+    plot(xxo,zeros(size(xxo)),'o:k',...
+        'linewidth',2,...
+        'markerfacecolor','none',...
+        'markersize',11);
+hold(ah,'off');
+    % format
+    tsize = 26; % text size
+    xlabel(ah,'Beam Length [ft]');
+    ylabel(ah,'Modal Amplitude');
+    set(ah,'fontsize',tsize,'fontname','Times New Roman');
+    xlim(ah,[min(xxo)-5 max(xxo)+5])
+    tmp = ah.YLim;
+    ylim(ah,[tmp(1) abs(tmp(1))*.3]);
+    grid(ah,'on')
+    grid(ah,'minor')
+    box on
+
+
+%% print results
+fprintf('\nTotal loads: %i %i\n', sum(f1),sum(f2))
+fprintf('\nExact Displacement:\n')
+fprintf('%f\n',y1)
+fprintf('\nModal Prediction:\n')
+fprintf('%f\n',y2)
+
+% percent difference
+tt = (y1(out) - y2) ./ y2 * 100; 
+fprintf('\nPercent Difference: \n');
+fprintf('%2.2f\n',tt);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
