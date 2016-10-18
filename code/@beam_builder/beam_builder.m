@@ -58,6 +58,7 @@ classdef beam_builder < handle
 	methods (Static)
         bh = example2;
         bh = example5;
+        [Kr,Mr] = beam_condense(K,M,rm,mchk);
 	end
 
 %% protected methods
