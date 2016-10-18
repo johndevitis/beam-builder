@@ -15,5 +15,15 @@ function example()
     bv.M = bb.M;
     bv.eig();
 	
+    bv.dampr = ones(size(bv.W))*.05; % 5% critical damping
+    
+    bv.ns = 2^9; 
+    bv.freqbnds = [-150 150];
+    
+    bv.in = 1:5;
+    bv.out = 1:5;
+    
+    bv.getFRF();
+    
 	
 end

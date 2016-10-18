@@ -18,7 +18,6 @@ function eig(self)
 
     % form mass normalized modeshapes
     self.Vn = zeros(size(self.V));
-%     self.ne = size(self.V,2);     % number of effective modes
     for ii = 1:self.ne
         self.Vn(:,ii) = self.V(:,ii)/sqrt(self.Mr(ii,ii));
     end
