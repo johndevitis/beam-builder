@@ -16,11 +16,25 @@ classdef beam_vibs < handle
         Mr % modal mass
         Kr % modal stiffness
         Vn % mass normalized shapes
+        dampr % damping ratio
+        ns % number of spectral lines
+        freqbnds % frequency bnds
+        outLoc 
+        inLoc
+        AA
+        HH
 	end
 
 %% dependent properties
 	properties (Dependent)
+        no
+        ni
         ne % number of effective modes
+        w
+        dampf % damping factor [rad/sec]
+        Wn % damped natural frequency [rad/sec]
+        root % positive system poles
+        Qr
 	end
 
 %% private properties
