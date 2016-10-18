@@ -1,0 +1,16 @@
+function example()
+%% example
+% 
+% 
+% 
+% author: john devitis
+% create date: 18-Oct-2016 16:49:31
+	
+    % use defaults from 5dof example in bb
+	[bm,bb] = beam_builder.example5();
+    
+	% create instance of beams_vibs class
+    bv
+	
+	
+end
