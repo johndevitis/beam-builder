@@ -6,6 +6,9 @@ function fh = vibsFRFplot(Hs,hh,in,out,w)
 %
 % jdv 06232015; 07232015; 08162015; 11112015
 
+% plot frf
+fprintf('H%d%d Magnitude\n',out,in);
+    
 % create figure
 fh = figure; 
 ah = axes; 

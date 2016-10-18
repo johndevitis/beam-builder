@@ -4,6 +4,8 @@ function fh = vibsIRFplot(hs,h,in,out,fs,l)
 %
 % jdv 06232015; 07232015; 08162015; 11112015
 
+fprintf('H%d%d - Impulse Response Function\n',out,in);
+
 % time sampling parameters
 dt = 1/fs;
 t  = 0:dt:l-dt;

@@ -24,7 +24,5 @@ function fh = plot(self,fh)
         'markerfacecolor','none',...
         'markersize',11);
     
-
-    
     hold(ah,'off');
 end

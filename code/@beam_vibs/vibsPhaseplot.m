@@ -6,6 +6,8 @@ function fh = vibsPhaseplot(Hs,hh,in,out,w)
 %
 % jdv 06232015; 07232015; 08162015; 11112015
 
+fprintf('H%d%d Phase\n',out,in);
+
 % create figure
 fh = figure; 
 ah = axes; 
