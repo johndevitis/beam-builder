@@ -48,9 +48,9 @@ classdef beam_vibs < handle
 		end
 
 	%% ordinary methods
-
+    
+    
 	%% dependent methods
-
 		function no = get.no(self)
 		%% number of outputs
 			no = length(self.out);
@@ -95,6 +95,13 @@ classdef beam_vibs < handle
 
 %% static methods
 	methods (Static)
+        [Hs,hh] = vibsFRF(AA,root,in,out,w);
+        fh = vibsFRFplot(Hs,hh,in,out,w);
+        
+        [hs,h] = vibsIRF(AA,root,in,out,fs,l);
+        fh = vibsIRFplot(hs,h,in,out,fs,l);
+        
+        fh = vibsPhaseplot(Hs,hh,in,out,w);
 	end
 
 %% protected methods

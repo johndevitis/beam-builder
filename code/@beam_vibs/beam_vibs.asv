@@ -48,9 +48,9 @@ classdef beam_vibs < handle
 		end
 
 	%% ordinary methods
-
+    
+    
 	%% dependent methods
-
 		function no = get.no(self)
 		%% number of outputs
 			no = length(self.out);
@@ -83,7 +83,9 @@ classdef beam_vibs < handle
 
 		function Qr = get.Qr(self)
 		%% modal scaling
-			Qr
+        % notes:
+        %  * -true unity mass due t the mass normalized eigenvector
+			Qr = 1./(2j.*diag(self.Mr).*self.Wn);
 		end
         function ne = get.ne(self)
         %% number of effective modes
@@ -93,6 +95,12 @@ classdef beam_vibs < handle
 
 %% static methods
 	methods (Static)
+        [Hs,hh] = vibsFRF(AA,root,in,out,w);
+        fh = vibsFRFplot(Hs,hh,in,out,w);
+        
+        [hs,h] = vibsIRF(AA,root,in,out,fs,l);
+        fh = vibsIRFplot(hs,h,in,out,fs,l);
+        
 	end
 
 %% protected methods
