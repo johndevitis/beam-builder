@@ -11,18 +11,26 @@ function example()
     
 	% create instance of beam_vibs class and assign parameters
     bv = beam_vibs();
+    
+    % assign mass and stiffness
     bv.K = bb.K;
     bv.M = bb.M;
+    
+    % eigen-solution and pole sorting
     bv.eig();
 
+    % assign percent critical damping
     bv.dampr = ones(size(bv.W))*.05; % 5% critical damping
     
-    bv.ns = 2^9; 
-    bv.freqbnds = [-150 150];
+    % assign spectral info
+    bv.ns = 2^9;                % number of freq samples
+    bv.freqbnds = [-150 150];   % -/+ freq bounds
     
+    % frf spatial sampling1
     bv.in = 1:5;
     bv.out = 1:5;
     
+    % get frf
     bv.getFRF();
     
     
